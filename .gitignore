@@ -1,0 +1,60 @@
+# ==========================================
+# GITIGNORE - ORGANIZADOR DE CONTATOS
+# Proteção contra vazamento de dados e caches
+# ==========================================
+
+# Ambientes Virtuais (NUNCA subir para o GitHub)
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Bytecode e Caches do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Arquivos de Build / Compilação / Pacotes
+build/
+dist/
+*.egg-info/
+.eggs/
+*.spec.bak
+
+# Configurações de IDEs e Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.pydevproject
+
+# Arquivos temporários do Sistema Operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs e Arquivos Temporários
+*.log
+*.tmp
+*.temp
+
+# Arquivos de Variáveis de Ambiente e Credenciais (Segurança)
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Dados exportados / Gerados pelo usuário (Evita subir contatos reais)
+*.csv
+*.xlsx
+export_*.json
+contatos_exportados/
+
+# Exceções (manter dados de amostra)
+!dados/amostra_contatos.txt

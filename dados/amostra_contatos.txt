@@ -1,0 +1,51 @@
+ID: 101
+Empresa: TechCorp Soluções Ltda
+CNPJ: 12.345.678/0001-90
+Capital Social: R$ 500.000,00
+Procurador: Carlos Eduardo Silva
+Login: carlos.silva
+Tipo de Acesso: Administrador
+Último Acesso: 2026-08-01
+Telefone: (11) 98765-4321 | (11) 3456-7835
+Email: carlos@techcorp.com.br
+---
+=== USUÁRIOS E PERFIS ===
+Procurador: Mariana Oliveira
+Login: mariana.o
+Tipo de Acesso: Gerente Financeiro
+Último Acesso: 2026-08-05
+Telefone: (11) 97123-4535 | (11) 3322-1100
+Email: mariana@techcorp.com.br
+----------------------------------------
+ID: 102
+Empresa: Nexus Logística e Transportes S.A.
+CNPJ: 98.765.432/0001-10
+Capital Social: R$ 1.200.000,00
+Procurador: Roberto Mendes
+Login: roberto.mendes
+Tipo de Acesso: Diretor Operacional
+Último Acesso: 2026-07-28
+Telefone: (21) 98877-6655 | (21) 2544-3335
+Email: roberto@nexuslog.com.br
+----------------------------------------
+ID: 103
+Empresa: Inova Saúde & Tecnologia
+CNPJ: 45.678.901/0001-33
+Capital Social: R$ 850.000,00
+Procurador: Dra. Patricia Alcantara
+Login: patricia.health
+Tipo de Acesso: Coordenadora Geral
+Último Acesso: 2026-08-06
+Telefone: (31) 99123-8899 | (31) 3214-5535
+Email: patricia@inovasaude.com.br
+----------------------------------------
+ID: 104
+Empresa: Vanguarda Soluções Digitais
+CNPJ: 33.221.100/0001-88
+Capital Social: R$ 350.000,00
+Procurador: Fernando Souza Costa
+Login: fernando.vanguarda
+Tipo de Acesso: Analista Senior
+Último Acesso: 2026-08-07
+Telefone: (41) 98455-1234 | (41) 3019-8735
+Email: fernando@vanguardadigital.com
