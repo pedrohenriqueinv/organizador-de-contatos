@@ -1733,13 +1733,18 @@ def run_app() -> None:
         key="editor_contatos",
     )
 
-    if "df_contatos" in st.session_state and st.session_state.df_contatos is not None:
-        estado = st.session_state.df_contatos.copy()
-        colunas = [c for c in df_editado.columns if c in estado.columns]
-        estado.loc[df_filtrado.index, colunas] = df_editado[colunas].values
-        st.session_state.df_contatos = estado
-        # Persiste alterações no arquivo local
-        st.session_state.df_contatos.to_csv("contatos_organizados.csv", index=False, encoding="utf-8-sig")
+    if "df_contatos" in st.session_state and st.session_state.df_contatos is not None and not df_filtrado.empty:
+        if len(df_filtrado) == len(df_editado):
+            colunas = [c for c in df_editado.columns if c in st.session_state.df_contatos.columns]
+            if not df_editado[colunas].equals(df_editor_input[colunas]):
+                estado = st.session_state.df_contatos.copy()
+                for c in colunas:
+                    estado.loc[df_filtrado.index, c] = df_editado[c].values
+                st.session_state.df_contatos = estado
+                try:
+                    st.session_state.df_contatos.to_csv("contatos_organizados.csv", index=False, encoding="utf-8-sig")
+                except Exception:
+                    pass
 
     total_atual = len(st.session_state.df_contatos)
     feitos_atual = int(st.session_state.df_contatos["Status"].sum())
