@@ -42,9 +42,13 @@ desktop.ini
 *.tmp
 *.temp
 
+# Caches de Teste (Pytest)
+.pytest_cache/
+
 # Arquivos de Variáveis de Ambiente e Credenciais (Segurança)
 .env
 .env.*
+!.env.example
 *.pem
 *.key
 credentials.json
@@ -58,3 +62,4 @@ contatos_exportados/
 
 # Exceções (manter dados de amostra)
 !dados/amostra_contatos.txt
+

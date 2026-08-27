@@ -1,0 +1,62 @@
+name: ETL Contacts Pipeline Scheduler
+
+on:
+  # Agendamento diário pontualmente às 12:00 UTC
+  schedule:
+    - cron: '0 12 * * *'
+
+  # Permite acionamento manual direto pela interface do GitHub Actions
+  workflow_dispatch:
+    inputs:
+      results_count:
+        description: 'Quantidade de contatos para extrair'
+        required: false
+        default: '50'
+      table_name:
+        description: 'Nome da tabela de destino no PostgreSQL'
+        required: false
+        default: 'contatos'
+
+  # Executa testes em Push e Pull Requests na branch principal
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-run-etl:
+    name: Test & Run ETL Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Instalar Dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🧪 Executar Testes Unitários (Pytest)
+        run: |
+          pytest tests/ -v --color=yes
+
+      - name: 🚀 Executar Pipeline ETL
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_RESULTS_COUNT: ${{ github.event.inputs.results_count || '50' }}
+          DB_TABLE_NAME: ${{ github.event.inputs.table_name || 'contatos' }}
+          LOG_LEVEL: 'INFO'
+        run: |
+          python pipeline/etl.py
