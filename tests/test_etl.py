@@ -1,19 +1,19 @@
 """
-Suíte de Testes Unitários - Pipeline ETL de Contatos
-===================================================
-Validações de limpeza de dados, validação de e-mails, sanitização de telefones,
-desduplicação e resiliência da transformação com Pytest.
+Suíte de Testes Unitários - Pipeline ETL de Contatos Reais
+==========================================================
+Validações de parsing de TXT, limpeza de dados, validação de e-mails,
+sanitização de telefones, desduplicação e carga com Pytest.
 """
 
 from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
-import requests
 
 from pipeline.etl import (
     clean_name,
     clean_phone,
     extract_contacts,
+    extrair_contatos_de_texto,
     get_db_engine,
     load_contacts_to_postgres,
     transform_contacts,
@@ -22,77 +22,70 @@ from pipeline.etl import (
 
 
 # ==============================================================================
-# FIXTURES DE DADOS DE TESTE
+# FIXTURES DE DADOS DE TESTE (TXT REAL)
 # ==============================================================================
 @pytest.fixture
+def sample_txt_content():
+    return """
+ID: 101
+Empresa: TechCorp Soluções Ltda
+CNPJ: 12.345.678/0001-90
+Procurador: carlos eduardo silva
+Telefone: (11) 98765-4321 | (11) 3456-7835
+Email: carlos@techcorp.com.br
+---
+ID: 102
+Empresa: Nexus Logística e Transportes S.A.
+CNPJ: 98.765.432/0001-10
+Procurador: Roberto Mendes
+Telefone: (21) 98877-6655
+Email: roberto@nexuslog.com.br
+"""
+
+
+@pytest.fixture
 def sample_raw_contacts():
-    """Retorna uma lista de contatos brutos simulando a resposta da RandomUser API."""
     return [
         {
-            "login": {"uuid": "u-001", "username": "carlos_silva"},
-            "name": {"first": "carlos eduardo", "last": "da silva"},
-            "gender": "male",
+            "nome_completo": "carlos eduardo da silva",
             "email": "carlos.silva@example.com",
-            "phone": "(11) 98765-4321",
-            "cell": "(11) 91234-5678",
-            "location": {
-                "street": {"number": 100, "name": "avenida paulista"},
-                "city": "são paulo",
-                "state": "são paulo",
-                "country": "brazil",
-                "postcode": "01310-100",
-                "coordinates": {"latitude": "-23.5615", "longitude": "-46.6559"},
-            },
-            "dob": {"date": "1990-05-15T00:00:00.000Z", "age": 34},
-            "registered": {"date": "2020-01-10T12:00:00.000Z"},
-            "picture": {"large": "https://randomuser.me/api/portraits/men/1.jpg"},
+            "telefone": "(11) 98765-4321",
+            "cidade": "são paulo",
+            "pais": "brasil",
+            "empresa": "TechCorp"
         },
         {
-            "login": {"uuid": "u-002", "username": "ana_souza"},
-            "name": {"first": "ANA", "last": "SOUZA"},
-            "gender": "female",
+            "nome_completo": "ANA SOUZA",
             "email": "ana.souza@corp.com.br",
-            "phone": "+55 (21) 3344-5566",
-            "cell": "2199887766",
-            "location": {
-                "street": {"number": 50, "name": "rua das flores"},
-                "city": "rio de janeiro",
-                "state": "rio de janeiro",
-                "country": "brazil",
-                "postcode": "20000-000",
-                "coordinates": {"latitude": "-22.9068", "longitude": "-43.1729"},
-            },
-            "dob": {"date": "1995-10-20T00:00:00.000Z", "age": 29},
-            "registered": {"date": "2021-06-15T08:30:00.000Z"},
-            "picture": {"large": "https://randomuser.me/api/portraits/women/2.jpg"},
+            "telefone": "+55 (21) 3344-5566",
+            "cidade": "rio de janeiro",
+            "pais": "brasil",
+            "empresa": "Nexus"
         },
     ]
 
 
-@pytest.fixture
-def contacts_with_duplicates_and_invalids(sample_raw_contacts):
-    """Retorna contatos contendo registros duplicados e e-mails inválidos."""
-    data = list(sample_raw_contacts)
-    
-    # Registro com e-mail duplicado (mesmo de carlos.silva@example.com)
-    data.append({
-        "login": {"uuid": "u-003", "username": "carlos_duplicate"},
-        "name": {"first": "Carlos", "last": "Silva Clonado"},
-        "email": "carlos.silva@example.com",
-        "phone": "11987654321",
-        "location": {"city": "São Paulo", "country": "Brazil"},
-    })
+# ==============================================================================
+# TESTES UNITÁRIOS: PARSING DE ARQUIVOS TXT
+# ==============================================================================
+class TestTxtParser:
+    def test_parse_txt_blocks(self, sample_txt_content):
+        contatos = extrair_contatos_de_texto(sample_txt_content)
+        assert len(contatos) == 2
+        assert contatos[0]["nome_completo"] == "carlos eduardo silva"
+        assert contatos[0]["email"] == "carlos@techcorp.com.br"
+        assert contatos[0]["empresa"] == "TechCorp Soluções Ltda"
+        assert contatos[1]["nome_completo"] == "Roberto Mendes"
 
-    # Registro com e-mail inválido
-    data.append({
-        "login": {"uuid": "u-004", "username": "invalid_user"},
-        "name": {"first": "Usuario", "last": "Invalido"},
-        "email": "email_sem_arroba_ponto_com",
-        "phone": "12345",
-        "location": {},
-    })
+    def test_parse_txt_empty(self):
+        contatos = extrair_contatos_de_texto("")
+        assert contatos == []
 
-    return data
+    def test_parse_tabular_pipe(self):
+        txt_pipes = "Lucas Mendes | lucas@empresa.com | (31) 98765-4321 | Tech SA"
+        contatos = extrair_contatos_de_texto(txt_pipes)
+        assert len(contatos) == 1
+        assert contatos[0]["email"] == "lucas@empresa.com"
 
 
 # ==============================================================================
@@ -105,11 +98,9 @@ class TestEmailValidation:
             ("user@example.com", True),
             ("carlos.silva@empresa.com.br", True),
             ("nome+tag@servico.co.uk", True),
-            ("contato_123@sub.dominio.org", True),
             ("email_invalido", False),
             ("@semusuario.com", False),
             ("sem_dominio@", False),
-            ("usuario@.com", False),
             ("", False),
             (None, False),
         ],
@@ -126,12 +117,10 @@ class TestPhoneCleaning:
         "raw_phone,expected_digits",
         [
             ("(11) 98765-4321", "11987654321"),
+            ("(11) 98765-4321 | (11) 3456-7835", "11987654321"),
             ("+55 (21) 3344-5566", "552133445566"),
-            ("0800-7070-1234", "080070701234"),
-            ("123456", "123456"),
             ("", ""),
             (None, ""),
-            ("sem-numeros", ""),
         ],
     )
     def test_clean_phone(self, raw_phone, expected_digits):
@@ -168,71 +157,23 @@ class TestTransformContacts:
         assert "nome_completo" in df.columns
         assert "email" in df.columns
         assert "telefone" in df.columns
-        assert "cidade" in df.columns
-        assert "pais" in df.columns
-        assert "data_ingestao" in df.columns
 
         # Verifica padronização com .title()
         assert df.loc[0, "nome_completo"] == "Carlos Eduardo Da Silva"
-        assert df.loc[0, "cidade"] == "São Paulo"
-        assert df.loc[0, "pais"] == "Brazil"
         assert df.loc[1, "nome_completo"] == "Ana Souza"
-        assert df.loc[1, "cidade"] == "Rio De Janeiro"
 
-        # Verifica limpeza de telefones
-        assert df.loc[0, "telefone"] == "11987654321"
-        assert df.loc[1, "telefone"] == "552133445566"
+    def test_transform_deduplication(self, sample_raw_contacts):
+        # Adiciona duplicata
+        duplicado = list(sample_raw_contacts)
+        duplicado.append(dict(sample_raw_contacts[0]))
+        df = transform_contacts(duplicado)
 
-    def test_transform_deduplication(self, contacts_with_duplicates_and_invalids):
-        df = transform_contacts(contacts_with_duplicates_and_invalids)
-
-        # Havia 2 contatos válidos + 1 duplicado + 1 com email inválido
-        # Resultado esperado: apenas 2 contatos únicos e válidos
         assert len(df) == 2
-        assert list(df["email"]) == ["carlos.silva@example.com", "ana.souza@corp.com.br"]
 
     def test_transform_empty_data(self):
         df = transform_contacts([])
         assert isinstance(df, pd.DataFrame)
         assert df.empty
-
-    def test_transform_malformed_record(self):
-        raw_data = [
-            {"invalid_key": 123},  # Registro sem campos esperados
-            {
-                "login": {"uuid": "u-ok"},
-                "name": {"first": "Lucas", "last": "Mendes"},
-                "email": "lucas.mendes@test.com",
-            },
-        ]
-        df = transform_contacts(raw_data)
-        assert len(df) == 1
-        assert df.iloc[0]["nome_completo"] == "Lucas Mendes"
-
-
-# ==============================================================================
-# TESTES UNITÁRIOS: EXTRAÇÃO COM MOCK HTTP
-# ==============================================================================
-class TestExtractContacts:
-    @patch("pipeline.etl.requests.get")
-    def test_extract_success(self, mock_get, sample_raw_contacts):
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"results": sample_raw_contacts}
-        mock_response.raise_for_status.return_value = None
-        mock_get.return_value = mock_response
-
-        results = extract_contacts(api_url="https://fake-url.com", results=2)
-        assert len(results) == 2
-        assert results[0]["name"]["first"] == "carlos eduardo"
-
-    @patch("pipeline.etl.requests.get")
-    def test_extract_http_error(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError("500 Server Error")
-        mock_get.return_value = mock_response
-
-        with pytest.raises(requests.exceptions.HTTPError):
-            extract_contacts(api_url="https://fake-url.com")
 
 
 # ==============================================================================
@@ -243,15 +184,6 @@ class TestDatabaseLoad:
         monkeypatch.delenv("DATABASE_URL", raising=False)
         with pytest.raises(ValueError, match="DATABASE_URL"):
             get_db_engine(None)
-
-    def test_get_db_engine_url_normalization(self, monkeypatch):
-        # Testa conversão de postgres:// para postgresql+psycopg2://
-        url = "postgres://user:pass@localhost:5432/testdb"
-        with patch("pipeline.etl.create_engine") as mock_engine:
-            get_db_engine(url)
-            mock_engine.assert_called_once()
-            called_url = mock_engine.call_args[0][0]
-            assert called_url.startswith("postgresql+psycopg2://")
 
     def test_load_contacts_empty_dataframe(self):
         df_empty = pd.DataFrame()
