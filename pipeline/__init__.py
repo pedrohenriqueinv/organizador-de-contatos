@@ -1,24 +1,32 @@
 """
-Pacote de Engenharia de Dados - Pipeline ETL
+Pacote de Engenharia de Dados - Pipeline ETL de Contatos
 """
 from pipeline.etl import (
+    COLUNAS_FINAIS,
+    CAMPOS_PADRONIZADOS,
+    parse_txt,
     extract_contacts,
     transform_contacts,
     load_contacts_to_postgres,
-    validate_email,
-    clean_phone,
-    clean_name,
+    limpar_valor_campo,
+    adicionar_valor,
+    identificar_campo,
+    garantir_tipos_colunas,
     get_db_engine,
     run_pipeline
 )
 
 __all__ = [
+    "COLUNAS_FINAIS",
+    "CAMPOS_PADRONIZADOS",
+    "parse_txt",
     "extract_contacts",
     "transform_contacts",
     "load_contacts_to_postgres",
-    "validate_email",
-    "clean_phone",
-    "clean_name",
+    "limpar_valor_campo",
+    "adicionar_valor",
+    "identificar_campo",
+    "garantir_tipos_colunas",
     "get_db_engine",
     "run_pipeline"
 ]

@@ -1,51 +1,152 @@
-ID: 101
-Empresa: TechCorp Soluções Ltda
-CNPJ: 12.345.678/0001-90
-Capital Social: R$ 500.000,00
-Procurador: Carlos Eduardo Silva
-Login: carlos.silva
-Tipo de Acesso: Administrador
-Último Acesso: 2026-08-01
-Telefone: (11) 98765-4321 | (11) 3456-7835
-Email: carlos@techcorp.com.br
----
+ID: 35379
+Empresa: FASCIATA EMPREENDIMENTOS I. LTDA
+CNPJ: 08.235.887/0001-09
+Capital Social: 11536937.0
+Localização: N/A
+Situação: ATIVA
+Porte: N/A
+Endereço: AVENIDA AVENIDA SELMA PARADA, 201 201 JARDIM MADALENA CAMPINAS SP CEP|13091904
+Contas: 6627|0014162-3, 6627|0014162-3, 6627|0014162-3
+Email: marcelofiguinha@acrodi.com.br
+
+Telefone: (19) 99679-0935 (CELULAR)
+Telefone: (19) 99657-9384 (CELULAR)
+Telefone: (19) 99671-0938 (CELULAR)
+Telefone: (19) 3869-4231 (FIXO)
+
 === USUÁRIOS E PERFIS ===
-Procurador: Mariana Oliveira
-Login: mariana.o
-Tipo de Acesso: Gerente Financeiro
-Último Acesso: 2026-08-05
-Telefone: (11) 97123-4535 | (11) 3322-1100
-Email: mariana@techcorp.com.br
-----------------------------------------
-ID: 102
-Empresa: Nexus Logística e Transportes S.A.
-CNPJ: 98.765.432/0001-10
-Capital Social: R$ 1.200.000,00
-Procurador: Roberto Mendes
-Login: roberto.mendes
-Tipo de Acesso: Diretor Operacional
-Último Acesso: 2026-07-28
-Telefone: (21) 98877-6655 | (21) 2544-3335
-Email: roberto@nexuslog.com.br
-----------------------------------------
-ID: 103
-Empresa: Inova Saúde & Tecnologia
-CNPJ: 45.678.901/0001-33
-Capital Social: R$ 850.000,00
-Procurador: Dra. Patricia Alcantara
-Login: patricia.health
-Tipo de Acesso: Coordenadora Geral
-Último Acesso: 2026-08-06
-Telefone: (31) 99123-8899 | (31) 3214-5535
-Email: patricia@inovasaude.com.br
-----------------------------------------
-ID: 104
-Empresa: Vanguarda Soluções Digitais
-CNPJ: 33.221.100/0001-88
-Capital Social: R$ 350.000,00
-Procurador: Fernando Souza Costa
-Login: fernando.vanguarda
-Tipo de Acesso: Analista Senior
-Último Acesso: 2026-08-07
-Telefone: (41) 98455-1234 | (41) 3019-8735
-Email: fernando@vanguardadigital.com
+
+--- Procurador 2 ---
+Login: MCRF00166
+Nome: MARCELO CORTES REMISIO FIGUINH
+CPF: 32007992850
+Perfil: Master
+Tipo de Acesso: Usuário e Senha
+Último Acesso: 16/03/2026 - 11h04
+Nascimento: 17/08/1984
+Mãe: SUELY CORTES FIGUINHA
+Ocupação: Analista de planejamento e orcamento - apo
+Renda: De 2 a 5 salarios minimos 3979.00
+Endereço Pessoal: RUA OSWALDO CRUZ - VILA INDEPENDENCIA - VALINHOS/SP CEP|13271608
+Telefone: (19) 99657-9384 (CELULAR)
+Telefone: (19) 99679-0935 (CELULAR)
+Telefone: (19) 99671-0938 (CELULAR)
+Telefone: (19) 3869-4231 (FIXO)
+Email: ironfigas@hotmail.com
+
+--- Procurador 3 ---
+Login: DRDB00087
+Nome: diego rafael de barros
+Perfil: Financeiro
+Tipo de Acesso: Usuário e Senha
+Último Acesso: 11/03/2026 - 16h47
+
+================================================================================
+
+ID: 34715
+Empresa: LUIZ CARLOS DA SILVA LTDA
+CNPJ: 42.368.299/0001-81
+Capital Social: 50000.0
+Localização: N/A
+Situação: ATIVA
+Porte: N/A
+Endereço: RUA DOS BRILHANTES 149 CHACARAS ACAPULCO NOVA ODESSA SP CEP|13389200
+Contas: 7384|0031236-3, 7384|0031236-3, 7384|0031236-3
+Email: astec@asteccontabil.com.br
+
+Telefone: (19) 98119-9332 (CELULAR)
+Telefone: (19) 98181-5645 (CELULAR)
+Telefone: (19) 98317-4945 (CELULAR)
+Telefone: (19) 98203-7317 (CELULAR)
+Telefone: (19) 3029-2638 (FIXO)
+Telefone: (19) 3408-7571 (FIXO)
+
+=== USUÁRIOS E PERFIS ===
+
+--- Procurador 2 ---
+Login: LCDS06657
+Nome: Luiz Carlos da Silva
+CPF: 91847176968
+Perfil: Master
+Tipo de Acesso: Usuário e Senha
+Último Acesso: 19/03/2026 - 08h30
+Nascimento: 16/04/1977
+Mãe: LAURA RIBEIRO DA SILVA
+Renda: De 1 a 2 salarios minimos 2571.00
+Endereço Pessoal: RUA PEDRO FURLAN - VILA BERTINI - AMERICANA/SP CEP|13460000
+Telefone: (19) 98119-9332 (CELULAR)
+Telefone: (19) 98181-5645 (CELULAR)
+Telefone: (19) 98317-4945 (CELULAR)
+Telefone: (19) 98203-7317 (CELULAR)
+Telefone: (19) 3029-2638 (FIXO)
+Telefone: (19) 3408-7571 (FIXO)
+Email: luiz@visualcampinas.com.br
+Email: visaocv@terra.com.br
+
+================================================================================
+
+ID: 34562
+Empresa: VALANDER HOLDING E PARTICIPACOES LTDA
+CNPJ: 44.454.786/0001-92
+Capital Social: 500000.0
+Localização: N/A
+Situação: ATIVA
+Porte: N/A
+Endereço: ESTRADA HISAICHI TAKE BAYASHI 200 JARDIM COLONIAL ATIBAIA SP CEP|12952011
+Contas: 0476|0075490-0, 0476|0075490-0, 0476|0075490-0
+Email: admvalander@gmail.com
+
+Telefone: (19) 98171-4060 (CELULAR)
+
+=== USUÁRIOS E PERFIS ===
+
+--- Procurador 2 ---
+Login: VDO01361
+Nome: valter de oliveira
+Perfil: Master
+Tipo de Acesso: Usuário e Senha
+Último Acesso: 18/08/2025 - 10h27
+
+--- Procurador 3 ---
+Login: EBA02425
+Nome: EUNICE BARBOSA
+Perfil: Eunice
+Tipo de Acesso: Usuário e Senha
+Último Acesso: 19/03/2026 - 15h10
+
+================================================================================
+
+ID: 32632
+Empresa: BENE & BENI COMERCIO DE PISCINAS LTDA
+CNPJ: 00.661.080/0001-26
+Capital Social: 450000.0
+Localização: N/A
+Situação: ATIVA
+Porte: N/A
+Endereço: AVENIDA INDEPENDENCIA 1.314 JARDIM SANTO ANTONIO VALINHOS SP CEP|13277000
+Contas: 2879|0003680-3, 2879|0003680-3, 2879|0003680-3, 2879|0003680-3
+Email: clausant@dglnet.com.br
+
+Telefone: (19) 99199-5780 (CELULAR)
+Telefone: (19) 98175-1902 (CELULAR)
+Telefone: (19) 99218-8761 (CELULAR)
+Telefone: (19) 3869-5415 (FIXO)
+Telefone: (19) 3869-3089 (FIXO)
+Telefone: (19) 99731-3741 (CELULAR)
+
+=== USUÁRIOS E PERFIS ===
+
+--- Procurador 2 ---
+Login: APBLS00003
+Nome: ANA PAULA BENEVIDES LIO SALIMB
+CPF: 24935469897
+Perfil: Master
+Tipo de Acesso: Usuário e Senha
+Último Acesso: 19/03/2026 - 11h17
+Nascimento: 03/06/1975
+Mãe: REGINA CELIA BENEVIDES LIO
+Ocupação: Auxiliar de escritorio
+Renda: De 2 a 5 salarios minimos 3933.00
+Endereço Pessoal: R PQ DOS ABROLHOS - JD PANORAMA - VINHEDO/SP CEP|13280000
+Telefone: (19) 99731-3741 (CELULAR)
+Email: valinhospiscinas@ig.com.br
