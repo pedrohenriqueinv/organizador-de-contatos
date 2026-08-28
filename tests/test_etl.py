@@ -101,10 +101,37 @@ class TestParserPadronizacao:
     def test_load_contacts_empty(self):
         assert load_contacts_to_postgres(pd.DataFrame()) == 0
 
-    @patch("pandas.DataFrame.to_sql")
-    def test_load_contacts_success(self, mock_to_sql, txt_completo):
+    def test_load_contacts_success(self, txt_completo):
         df = transform_contacts(txt_completo)
         mock_engine = MagicMock()
+        mock_conn = MagicMock()
+        mock_engine.connect.return_value.__enter__.return_value = mock_conn
+        mock_engine.begin.return_value.__enter__.return_value = mock_conn
+
         loaded = load_contacts_to_postgres(df, engine=mock_engine)
         assert loaded == 1
-        mock_to_sql.assert_called_once()
+        assert mock_conn.execute.called
+
+    @patch("pipeline.ai_fallback.requests.post")
+    def test_ai_fallback_trigger(self, mock_post, monkeypatch):
+        monkeypatch.setenv("GEMINI_API_KEY", "fake_key_for_test")
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "candidates": [{
+                "content": {
+                    "parts": [{
+                        "text": '[{"ID": "999", "Empresa": "Alpha Tech", "CNPJ": "11.222.333/0001-99", "Capital Social": "100000", "Procurador/Nome": "Roberto Silva", "Login": "roberto", "Tipo de Acesso": "Master", "Último Acesso": "20/08/2026", "Telefones": "(11) 98888-7777", "E-mail": "roberto@alpha.com", "Outros": "TI", "Status": false}]'
+                    }]
+                }
+            }]
+        }
+        mock_post.return_value = mock_response
+
+        texto_caotico = "Contato urgente do Roberto Silva na Alpha Tech, fone 11 98888-7777"
+        df = transform_contacts(texto_caotico)
+        assert not df.empty
+        assert df.iloc[0]["Procurador/Nome"] == "Roberto Silva"
+        assert df.iloc[0]["Empresa"] == "Alpha Tech"
+
+

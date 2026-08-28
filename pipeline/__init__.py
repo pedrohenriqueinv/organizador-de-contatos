@@ -1,5 +1,5 @@
 """
-Pacote de Engenharia de Dados - Pipeline ETL de Contatos
+Pacote de Engenharia de Dados - Pipeline ETL de Contatos com IA Fallback
 """
 from pipeline.etl import (
     COLUNAS_FINAIS,
@@ -15,6 +15,7 @@ from pipeline.etl import (
     get_db_engine,
     run_pipeline
 )
+from pipeline.ai_fallback import extrair_contatos_com_ia
 
 __all__ = [
     "COLUNAS_FINAIS",
@@ -28,5 +29,6 @@ __all__ = [
     "identificar_campo",
     "garantir_tipos_colunas",
     "get_db_engine",
-    "run_pipeline"
+    "run_pipeline",
+    "extrair_contatos_com_ia"
 ]

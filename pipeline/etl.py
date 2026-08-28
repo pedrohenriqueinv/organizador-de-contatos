@@ -1,14 +1,18 @@
 """
-Pipeline ETL - Organizador de Contatos Corporativos
-===================================================
+Pipeline ETL - Organizador de Contatos Corporativos (com IA Fallback)
+====================================================================
 Módulo de Engenharia de Dados que preserva integralmente as regras originais de
 padronização de listas em formato TXT (blocos chave-valor, empresas, perfis de
 procuradores, telefones compostos, e-mails, CNPJ e outros campos), aplicando
-limpeza rigorosa e realizando a carga no PostgreSQL na nuvem (Neon).
+limpeza rigorosa, suporte a Fallback com Inteligência Artificial (Google Gemini)
+para textos caóticos e carga idempotente (Upsert) em banco PostgreSQL na nuvem (Neon).
 
 Colunas Padronizadas Originais:
     ["ID", "Empresa", "CNPJ", "Capital Social", "Procurador/Nome", "Login",
      "Tipo de Acesso", "Último Acesso", "Telefones", "E-mail", "Outros", "Status"]
+
+Segurança:
+    Credenciais e chaves de API são lidas exclusivamente de variáveis de ambiente.
 
 Autor: Engenharia de Dados
 Data: 2026
@@ -318,7 +322,7 @@ def extract_contacts(file_path: Optional[str] = None) -> str:
 
 
 # ==============================================================================
-# ETAPA 2: TRANSFORMAÇÃO E QUALIDADE (TRANSFORM)
+# ETAPA 2: TRANSFORMAÇÃO E QUALIDADE (TRANSFORM COM IA FALLBACK)
 # ==============================================================================
 def chave_deduplicacao(row: pd.Series) -> Optional[str]:
     """Gera chave única para deduplicação com base em telefones ou nomes."""
@@ -335,24 +339,40 @@ def chave_deduplicacao(row: pd.Series) -> Optional[str]:
 
 def transform_contacts(conteudo_txt: str) -> pd.DataFrame:
     """
-    Executa o parser, a padronização e a deduplicação seguindo à risca a lista oficial.
+    Executa o parser tradicional com fallback inteligente de IA para anomalias.
 
-    Args:
-        conteudo_txt (str): Texto bruto do arquivo TXT.
-
-    Returns:
-        pd.DataFrame: DataFrame padronizado com as colunas oficiais.
+    Fluxo Híbrido:
+        1. Tenta o parser determinístico tradicional (0.01s).
+        2. Se o texto for caótico ou não gerar contatos válidos, aciona o Fallback de IA.
+        3. Aplica deduplicação e garantia de tipos das 12 colunas.
     """
     logger.info("[TRANSFORM] Iniciando parsing e padronização das listas de contatos...")
     start_time = time.time()
 
     df = parse_txt(conteudo_txt)
 
+    # Verificação de Resiliência: Se o parser tradicional não retornou registros
+    # mas o conteúdo tem texto significativo, aciona o Fallback de IA
+    if df.empty and conteudo_txt and len(conteudo_txt.strip()) > 20:
+        logger.info("[TRANSFORM] Parser tradicional não identificou contatos estruturados. Acionando IA Fallback...")
+        try:
+            try:
+                from pipeline.ai_fallback import extrair_contatos_com_ia
+            except ImportError:
+                from ai_fallback import extrair_contatos_com_ia
+
+            contatos_ia = extrair_contatos_com_ia(conteudo_txt)
+            if contatos_ia:
+                df = pd.DataFrame(contatos_ia, columns=COLUNAS_FINAIS)
+                df = garantir_tipos_colunas(df)
+        except Exception as err:
+            logger.warning(f"[TRANSFORM] Falha no fallback de IA: {err}")
+
     if df.empty:
         logger.warning("[TRANSFORM] Nenhum contato identificado no texto.")
         return df
 
-    logger.info(f"[TRANSFORM] {len(df)} registros estruturados gerados pelo parser.")
+    logger.info(f"[TRANSFORM] {len(df)} registros estruturados obtidos.")
 
     # Deduplicação inteligente
     df["_chave"] = df.apply(chave_deduplicacao, axis=1)
@@ -368,7 +388,7 @@ def transform_contacts(conteudo_txt: str) -> pd.DataFrame:
 
 
 # ==============================================================================
-# ETAPA 3: CARGA NO POSTGRESQL (LOAD)
+# ETAPA 3: CARGA NO POSTGRESQL (LOAD IDEMPOTENTE)
 # ==============================================================================
 def get_db_engine(database_url: Optional[str] = None) -> Engine:
     """Cria e configura o Engine do SQLAlchemy para o PostgreSQL."""
@@ -395,8 +415,8 @@ def load_contacts_to_postgres(
     if_exists: str = "append"
 ) -> int:
     """
-    Carrega os contatos padronizados no PostgreSQL Neon.
-    Compatível com a tabela contatos_processados e gera backup completo com todas as colunas.
+    Carrega os contatos padronizados no PostgreSQL Neon de forma idempotente (Upsert).
+    Evita erros de chave duplicada atualizando registros já existentes.
     """
     if df.empty:
         logger.warning("[LOAD] DataFrame vazio. Nenhuma carga realizada.")
@@ -412,7 +432,7 @@ def load_contacts_to_postgres(
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
 
-        # 1. Preparar DataFrame para a tabela contatos_processados
+        # Preparar DataFrame para a tabela contatos_processados
         df_db = pd.DataFrame()
         df_db["nome_completo"] = df["Procurador/Nome"].where(df["Procurador/Nome"] != "", df["Empresa"])
         df_db["email"] = df["E-mail"].apply(lambda x: str(x).split("|")[0].strip() if x else "")
@@ -421,21 +441,42 @@ def load_contacts_to_postgres(
         df_db["pais"] = df["CNPJ"]
         df_db["data_ingestao"] = datetime.now(timezone.utc)
 
-        # Inserção na tabela de produção
-        df_db.to_sql(
-            name=table_name,
-            con=engine,
-            if_exists=if_exists,
-            index=False,
-            chunksize=500,
-            method="multi"
-        )
+        # Carga idempotente via Upsert (ON CONFLICT DO UPDATE)
+        loaded_count = 0
+        with engine.begin() as conn:
+            for _, row in df_db.iterrows():
+                email_val = str(row["email"]).strip()
+                if not email_val:
+                    continue
+
+                stmt = text(f"""
+                    INSERT INTO {table_name} (nome_completo, email, telefone, cidade, pais, data_ingestao)
+                    VALUES (:nome_completo, :email, :telefone, :cidade, :pais, :data_ingestao)
+                    ON CONFLICT (email) DO UPDATE SET
+                        nome_completo = EXCLUDED.nome_completo,
+                        telefone = EXCLUDED.telefone,
+                        cidade = EXCLUDED.cidade,
+                        pais = EXCLUDED.pais,
+                        data_ingestao = EXCLUDED.data_ingestao;
+                """)
+                conn.execute(
+                    stmt,
+                    {
+                        "nome_completo": row["nome_completo"],
+                        "email": email_val,
+                        "telefone": row["telefone"],
+                        "cidade": row["cidade"],
+                        "pais": row["pais"],
+                        "data_ingestao": row["data_ingestao"]
+                    }
+                )
+                loaded_count += 1
 
         elapsed = time.time() - start_time
         logger.info(
-            f"[LOAD] Sucesso: {len(df)} contatos inseridos com sucesso na tabela '{table_name}' em {elapsed:.2f}s!"
+            f"[LOAD] Sucesso: {loaded_count} contatos sincronizados (upsert) na tabela '{table_name}' em {elapsed:.2f}s!"
         )
-        return len(df)
+        return loaded_count
 
     except Exception as err:
         logger.error(f"[LOAD] Erro durante a carga no banco: {err}")
@@ -450,10 +491,10 @@ def run_pipeline(
     table_name: Optional[str] = None,
     if_exists: str = "append"
 ) -> Tuple[bool, int]:
-    """Executa o ciclo completo de ETL com a padronização oficial de contatos."""
+    """Executa o ciclo completo de ETL com a padronização oficial de contatos e IA fallback."""
     total_start = time.time()
     logger.info("=" * 60)
-    logger.info("🚀 INICIANDO PIPELINE ETL DE CONTATOS (PADRONIZAÇÃO OFICIAL)")
+    logger.info("🚀 INICIANDO PIPELINE ETL DE CONTATOS (HÍBRIDO: REGRAS + IA)")
     logger.info("=" * 60)
 
     table = table_name or os.getenv("DB_TABLE_NAME", "contatos_processados")
@@ -462,7 +503,7 @@ def run_pipeline(
         # 1. Extração
         txt_content = extract_contacts(file_path=file_path)
 
-        # 2. Transformação com parser oficial
+        # 2. Transformação (Parser Oficial + IA Fallback)
         df_padronizado = transform_contacts(conteudo_txt=txt_content)
 
         if df_padronizado.empty:
@@ -480,7 +521,7 @@ def run_pipeline(
         logger.info("=" * 60)
         logger.info(
             f"✅ PIPELINE CONCLUÍDO COM SUCESSO! "
-            f"{linhas_carregadas} contatos padronizados e salvos na nuvem em {total_elapsed:.2f}s."
+            f"{linhas_carregadas} contatos sincronizados e salvos na nuvem em {total_elapsed:.2f}s."
         )
         logger.info("=" * 60)
         return True, linhas_carregadas
