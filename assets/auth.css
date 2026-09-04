@@ -1,0 +1,356 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+
+/* Esconder barras e sidebar nativa do Streamlit na tela de login */
+[data-testid="stSidebar"] {
+    display: none !important;
+}
+header[data-testid="stHeader"] {
+    display: none !important;
+}
+footer {
+    display: none !important;
+}
+#MainMenu {
+    visibility: hidden !important;
+}
+
+/* Reset e Fundo Dark Glassmorphism */
+html, body, .stApp {
+    background: radial-gradient(circle at 50% 12%, rgba(78, 222, 163, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(76, 215, 246, 0.07) 0%, transparent 40%),
+                #0c1322 !important;
+    min-height: 100vh !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    color: #dce2f7 !important;
+}
+
+.main, .block-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+    background: transparent !important;
+}
+
+/* Header Superior Fixo */
+.auth-top-header {
+    width: 100%;
+    height: 56px;
+    background: rgba(7, 14, 29, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(60, 74, 66, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 100;
+}
+.auth-top-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.auth-top-header .brand-icon {
+    color: #4edea3;
+    font-size: 20px;
+}
+.auth-top-header .brand-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #dce2f7;
+    letter-spacing: -0.01em;
+}
+.auth-top-header .badge-ssl {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #4cd7f6;
+    letter-spacing: 0.08em;
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(60, 74, 66, 0.5);
+}
+.auth-top-header .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4cd7f6;
+    box-shadow: 0 0 8px #4cd7f6;
+    display: inline-block;
+}
+.auth-top-header .status-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(25, 31, 47, 0.85);
+    padding: 4px 14px;
+    border-radius: 9999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #bbcabf;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Área Central de Conteúdo */
+.auth-content-area {
+    max-width: 620px;
+    margin: 2rem auto 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.auth-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #232a3a;
+    padding: 5px 14px;
+    border-radius: 9999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: #bbcabf;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.auth-brand-title {
+    font-size: 34px;
+    font-weight: 700;
+    color: #dce2f7;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+}
+.auth-brand-desc {
+    font-size: 14.5px;
+    color: #bbcabf;
+    max-width: 580px;
+    line-height: 1.5;
+    margin: 0 auto 1.5rem auto;
+}
+
+/* Formulário Streamlit estilizado como Glassmorphic Card */
+div[data-testid="stForm"] {
+    width: 100% !important;
+    max-width: 540px !important;
+    margin: 0 auto !important;
+    background: rgba(20, 27, 43, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 16px !important;
+    padding: 2rem 2.2rem !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(78, 222, 163, 0.12) !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+div[data-testid="stForm"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4edea3, transparent);
+}
+
+.card-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    width: 100%;
+}
+.card-main-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #dce2f7;
+    letter-spacing: -0.01em;
+}
+.card-tag {
+    background: #2e3545;
+    color: #4cd7f6;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.card-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4cd7f6;
+    display: inline-block;
+}
+.card-subtext {
+    font-size: 13px;
+    color: #bbcabf;
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+}
+
+/* Inputs de Texto */
+div[data-testid="stForm"] div[data-testid="stTextInput"] {
+    margin-bottom: 8px !important;
+    text-align: left !important;
+}
+div[data-testid="stForm"] div[data-testid="stTextInput"] label {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: #dce2f7 !important;
+    margin-bottom: 3px !important;
+}
+div[data-testid="stForm"] input {
+    background: #070e1d !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #dce2f7 !important;
+    border-radius: 8px !important;
+    height: 44px !important;
+    padding: 0 12px !important;
+    font-size: 13px !important;
+    transition: all 0.2s ease !important;
+}
+div[data-testid="stForm"] input:focus {
+    border-color: #4edea3 !important;
+    background: #141b2b !important;
+    box-shadow: 0 0 0 2px rgba(78, 222, 163, 0.25) !important;
+}
+
+/* Checkbox */
+div[data-testid="stForm"] div[data-testid="stCheckbox"] {
+    margin-top: 4px !important;
+    margin-bottom: 12px !important;
+    text-align: left !important;
+}
+div[data-testid="stForm"] div[data-testid="stCheckbox"] label {
+    font-size: 12px !important;
+    color: #bbcabf !important;
+}
+
+/* Botão de Autenticação */
+div[data-testid="stForm"] div[data-testid="stFormSubmitButton"] button {
+    width: 100% !important;
+    height: 48px !important;
+    background: linear-gradient(90deg, #10b981 0%, #03b5d3 100%) !important;
+    color: #002113 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    margin-top: 4px !important;
+}
+div[data-testid="stForm"] div[data-testid="stFormSubmitButton"] button:hover {
+    opacity: 0.95 !important;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Links Auxiliares no Rodapé do Card */
+.auth-aux-links {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(60, 74, 66, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: #bbcabf;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+}
+.auth-aux-links span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #bbcabf;
+}
+
+/* Fita de Telemetria */
+.telemetry-ribbon {
+    max-width: 540px;
+    margin: 14px auto 2.5rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #bbcabf;
+    padding: 0 4px;
+    box-sizing: border-box;
+    font-family: 'JetBrains Mono', monospace;
+    width: 100%;
+}
+.telemetry-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(25, 31, 47, 0.7);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.pulse-dot-green {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4edea3;
+    display: inline-block;
+}
+
+/* Floating Companion Badge (Bottom-Right) */
+.floating-cat-badge {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(35, 42, 58, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(78, 222, 163, 0.3);
+    border-radius: 9999px;
+    padding: 6px 16px 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    z-index: 9999;
+}
+.floating-cat-img {
+    width: 36px !important;
+    height: 36px !important;
+    max-width: 36px !important;
+    max-height: 36px !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    border: 1px solid #10b981 !important;
+    display: block !important;
+}
+.floating-cat-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.floating-cat-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #dce2f7;
+    line-height: 1.2;
+}
+.floating-cat-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: #bbcabf;
+    line-height: 1.2;
+}
