@@ -60,6 +60,8 @@ secrets.json
 export_*.json
 contatos_exportados/
 
-# Exceções (manter dados de amostra)
+# Exceções (manter dados de amostra e chaves iniciais)
 !dados/amostra_contatos.txt
+!dados/texto_caotico.txt
+!dados/chaves_acesso.json
 
