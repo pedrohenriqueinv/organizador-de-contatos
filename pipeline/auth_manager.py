@@ -263,3 +263,42 @@ def obter_resumo_estatistico() -> Dict[str, int]:
         "revogadas": revogadas,
         "expiradas": expiradas
     }
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Gerenciador de Chaves de Acesso Corporativas")
+    parser.add_argument("--gerar", action="store_true", help="Gera uma nova chave corporativa")
+    parser.add_argument("--nome", type=str, default="Colaborador", help="Nome do destinatário da chave")
+    parser.add_argument("--email", type=str, default="", help="E-mail do destinatário")
+    parser.add_argument("--dias", type=int, default=30, help="Dias de validade (padrão: 30)")
+    parser.add_argument("--listar", action="store_true", help="Lista chaves cadastradas")
+    parser.add_argument("--revogar", type=str, default="", help="Revoga uma chave específica")
+
+    args = parser.parse_args()
+
+    if args.gerar:
+        chave = criar_nova_chave(
+            responsavel="Aline (Administradora)",
+            destinatario_nome=args.nome,
+            destinatario_email=args.email,
+            dias_validade=args.dias
+        )
+        print(f"\n[SUCESSO] Nova Chave Corporativa Gerada:")
+        print(f" Código: {chave['codigo']}")
+        print(f" Destinatário: {chave['destinatario_nome']} ({chave['destinatario_email']})")
+        print(f" Status: {chave['status']} | Validade: {args.dias} dias\n")
+    elif args.revogar:
+        if revogar_chave(args.revogar):
+            print(f"\n[SUCESSO] Chave {args.revogar} revogada com sucesso.\n")
+        else:
+            print(f"\n[ERRO] Chave {args.revogar} não encontrada.\n")
+    else:
+        stats = obter_resumo_estatistico()
+        print("\n=== RESUMO DE CHAVES DE ACESSO CORPORATIVAS ===")
+        print(f" Total: {stats['total']} | Ativas: {stats['ativas']} | Revogadas: {stats['revogadas']}")
+        for c in listar_chaves():
+            status_tag = "[ATIVA]" if c["status"] == "ativa" else "[REVOGADA]"
+            print(f" {status_tag} {c['codigo']} -> {c['destinatario_nome']} ({c['status']})")
+        print("================================================\n")
