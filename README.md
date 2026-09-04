@@ -78,17 +78,69 @@ Organizador-de-contatos/
 ├── .github/
 │   └── workflows/
 │       └── pipeline_schedule.yml  # Orquestração diária Cron (12:00 UTC) e manual
+├── .streamlit/
+│   └── config.toml                # Tema Dark e parâmetros para Streamlit Cloud
+├── dados/
+│   ├── amostra_contatos.txt       # Base de dados de exemplo
+│   ├── texto_caotico.txt          # Casos de borda para teste de IA
+│   └── chaves_acesso.json         # Registro persistente de chaves corporativas
 ├── pipeline/
-│   ├── __init__.py                # Exportação dos componentes do pipeline
+│   ├── __init__.py                # Exportação dos componentes
+│   ├── ai_fallback.py             # Módulo de resiliência com IA (Google Gemini)
+│   ├── auth_manager.py            # Motor de autenticação e gerador de chaves
 │   └── etl.py                     # Pipeline modular (Extract, Transform, Load)
 ├── tests/
 │   ├── __init__.py
-│   └── test_etl.py                # Suíte de testes unitários com pytest
+│   ├── test_auth.py               # Testes unitários de chaves e autenticação
+│   └── test_etl.py                # Suíte de testes unitários do pipeline
 ├── .env.example                   # Modelo de variáveis de ambiente
 ├── .gitignore                     # Proteção de credenciais, logs e caches
-├── requirements.txt               # Dependências do projeto
+├── gatinho.jpg                    # Avatar oficial do Gatinho Assistant
+├── organizador_contatos.py        # Interface Web Pro Streamlit (Taste Glassmorphism)
+├── requirements.txt               # Dependências do projeto (Streamlit, Pandas, etc.)
 └── README.md                      # Documentação técnica de arquitetura
 ```
+
+---
+
+## 🔐 Autenticação Corporativa & Gestão de Chaves de Acesso
+
+O sistema conta com uma tela de autenticação moderna em **Dark Glassmorphism** que exige:
+1. **E-mail Corporativo** (Identificação SSO)
+2. **Senha de Acesso**
+3. **Chave de Acesso Corporativa Obrigatória** no padrão: `KEY-XXXX-XXXX-AUTH`
+
+### 👑 Papel da Administradora (Geração de Chaves)
+* **Responsável Exclusiva:** A administradora (Aline) possui acesso ao painel de **Gestão de Chaves**, onde pode:
+  * Gerar novos tokens com 1 clique (geração criptograficamente segura sem caracteres ambíguos).
+  * Atribuir o token ao nome e e-mail corporativo do colaborador ou setor.
+  * Definir tempo de validade (30, 60, 90 dias ou permanente).
+  * Auditar total de acessos, data de emissão e revogar acessos instantaneamente.
+* **Credenciais Padrão Iniciais:**
+  * **E-mail:** `admin@empresa.com`
+  * **Senha:** `admin123`
+  * **Chave Mestra:** `KEY-ALIN-9982-AUTH`
+*(Valores customizáveis via variáveis de ambiente no `.env`)*.
+
+---
+
+## ☁️ Como Fazer o Deploy no Streamlit Community Cloud (100% Gratuito)
+
+1. Acesse **[share.streamlit.io](https://share.streamlit.io)** e faça login com sua conta do GitHub.
+2. Clique em **New app**.
+3. Preencha as configurações:
+   * **Repository:** `pedrohenriqueinv/etl-contacts-pipeline`
+   * **Branch:** `main`
+   * **Main file path:** `organizador_contatos.py`
+4. *(Opcional)* Em **Advanced settings** > **Secrets**, configure suas variáveis:
+   ```toml
+   ADMIN_EMAIL = "admin@empresa.com"
+   ADMIN_PASSWORD = "admin123"
+   ADMIN_MASTER_KEY = "KEY-ALIN-9982-AUTH"
+   GEMINI_API_KEY = "sua_chave_gemini"
+   DATABASE_URL = "postgresql://..."
+   ```
+5. Clique em **Deploy!** Seu aplicativo estará online com URL pública e segura em menos de 2 minutos.
 
 ---
 
