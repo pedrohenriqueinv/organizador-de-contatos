@@ -16,6 +16,15 @@ from pipeline.etl import (
     run_pipeline
 )
 from pipeline.ai_fallback import extrair_contatos_com_ia
+from pipeline.auth_manager import (
+    criar_nova_chave,
+    listar_chaves,
+    revogar_chave,
+    reativar_chave,
+    validar_credenciais_e_chave,
+    obter_resumo_estatistico,
+    obter_banco_chaves
+)
 
 __all__ = [
     "COLUNAS_FINAIS",
@@ -30,5 +39,12 @@ __all__ = [
     "garantir_tipos_colunas",
     "get_db_engine",
     "run_pipeline",
-    "extrair_contatos_com_ia"
+    "extrair_contatos_com_ia",
+    "criar_nova_chave",
+    "listar_chaves",
+    "revogar_chave",
+    "reativar_chave",
+    "validar_credenciais_e_chave",
+    "obter_resumo_estatistico",
+    "obter_banco_chaves"
 ]

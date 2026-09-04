@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "sistema": "Organizador de Contatos Enterprise",
+    "versao_seguranca": "2.0-AES256",
+    "atualizado_em": "2026-09-04T19:51:09.595651+00:00"
+  },
+  "chaves": [
+    {
+      "codigo": "KEY-KMZS-6AY6-AUTH",
+      "responsavel": "Aline (Administradora)",
+      "destinatario_nome": "Funcionario Demitido",
+      "destinatario_email": "ex@empresa.com",
+      "perfil": "usuario",
+      "status": "revogada",
+      "criada_em": "2026-09-04T19:51:09.589903+00:00",
+      "expira_em": "2026-10-04T19:51:09.589903+00:00",
+      "usada_em": null,
+      "total_acessos": 0,
+      "revogada_em": "2026-09-04T19:51:09.595432+00:00"
+    },
+    {
+      "codigo": "KEY-6YXB-GCAF-AUTH",
+      "responsavel": "Aline (Administradora)",
+      "destinatario_nome": "Maria Gestora",
+      "destinatario_email": "maria@empresa.com",
+      "perfil": "usuario",
+      "status": "ativa",
+      "criada_em": "2026-09-04T19:51:09.577085+00:00",
+      "expira_em": "2026-10-04T19:51:09.577085+00:00",
+      "usada_em": "2026-09-04T19:51:09.582149+00:00",
+      "total_acessos": 1
+    },
+    {
+      "codigo": "KEY-FN8D-5VRF-AUTH",
+      "responsavel": "Aline (Administradora)",
+      "destinatario_nome": "Lucas Engenheiro",
+      "destinatario_email": "lucas@empresa.com",
+      "perfil": "usuario",
+      "status": "ativa",
+      "criada_em": "2026-09-04T19:51:09.569224+00:00",
+      "expira_em": "2026-10-04T19:51:09.569224+00:00",
+      "usada_em": null,
+      "total_acessos": 0
+    },
+    {
+      "codigo": "KEY-ALIN-9982-AUTH",
+      "responsavel": "Aline (Administradora)",
+      "destinatario_nome": "Administração Geral",
+      "destinatario_email": "admin@empresa.com",
+      "perfil": "admin",
+      "status": "ativa",
+      "criada_em": "2026-09-04T19:49:16.385980+00:00",
+      "expira_em": null,
+      "usada_em": null,
+      "total_acessos": 0
+    }
+  ]
+}
